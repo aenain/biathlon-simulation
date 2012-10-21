@@ -9,7 +9,8 @@ import desmoj.core.simulator.TimeSpan;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * Zdarzenie 'wygeneruj i wystaruj zawodnika'.
+ * 
  * @author Artur Hebda
  */
 public class BiathleteGenerator extends ExternalEvent {
@@ -19,6 +20,12 @@ public class BiathleteGenerator extends ExternalEvent {
         super(owner, name, showInTrace);
     }
 
+    /**
+     * Wywoływane podczas zajścia zdarzenia. Tworzy nowego zawodnika oraz dodaje go
+     * do kolejki biatlonistów. Następnie dopisuje do harmonogramu zdarzenie 
+     * 'przybycie do punktu pomiarowego', co w praktyce oznacza start zawodnika
+     * w biegu.
+     */
     @Override
     public void eventRoutine() {
         Biathlon model = (Biathlon)getModel();

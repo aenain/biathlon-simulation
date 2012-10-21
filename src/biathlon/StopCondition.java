@@ -3,7 +3,9 @@ package biathlon;
 import desmoj.core.simulator.ModelCondition;
 
 /**
- *
+ * Klasa odpowiedzialna za warunek zakończenia symulacji - kiedy wszyscy 
+ * zawodnicy dobiegną do mety.
+ * 
  * @author Artur Hebda
  */
 public class StopCondition extends ModelCondition {
@@ -14,6 +16,10 @@ public class StopCondition extends ModelCondition {
         this.race = race;
     }
 
+    /**
+     * 
+     * @return true - jeśli wszyscy zawodnicy dobiegli do mety 
+     */
     @Override
     public boolean check() {
         return race.haveAllBiathletesFinished();

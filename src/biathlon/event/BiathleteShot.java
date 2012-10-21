@@ -10,7 +10,8 @@ import desmoj.core.simulator.TimeSpan;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * Zdarzenie 'pojedynczy strzał'
+ * 
  * @author Artur Hebda
  */
 public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
@@ -18,6 +19,15 @@ public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
         super(owner, name, showInTrace);
     }
 
+    /**
+     * Wywoływane podczas zajścia zdarzenia. Losuje i zapisuje rezultat danego strzału.
+     * Następnie, jeśli ilość wykonanych strzałów jest mniejsza niż 5, to dodaje
+     * do harmonogramu zdarzenie kolejnego strzału. W przeciwnym wypadku oblicza
+     * karny czas.
+     * 
+     * @param biathlete
+     * @param shootingArea 
+     */
     @Override
     public void eventRoutine(Biathlete biathlete, ShootingArea shootingArea) {
         Biathlon model = (Biathlon)getModel();

@@ -5,7 +5,8 @@ import biathlon.checkpoint.Checkpoint;
 import desmoj.core.simulator.Model;
 
 /**
- *
+ * Reprezentuje strzelnicę.
+ * 
  * @author Artur Hebda
  */
 public class ShootingArea extends Entity {

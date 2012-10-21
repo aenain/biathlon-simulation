@@ -5,7 +5,8 @@ import desmoj.core.simulator.TimeInstant;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * 
+ * 
  * @author Artur Hebda
  */
 public class BiathleteEvent {

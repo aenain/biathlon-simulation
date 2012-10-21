@@ -1,3 +1,6 @@
+/**
+ * Klasy związane z obsługą punktów pomiaru czasu
+ */
 package biathlon.checkpoint;
 
 import biathlon.Biathlete;
@@ -6,7 +9,8 @@ import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 
 /**
- *
+ * Klasa reprezentująca punkt pomiaru czasu znajdujący się za strzelnicą.
+ * 
  * @author Artur Hebda
  */
 public class AfterShootingArea extends ShootingArea {
@@ -20,6 +24,12 @@ public class AfterShootingArea extends ShootingArea {
         shootingArea.setAfterCheckpoint(this);
     }
 
+    /**
+     * Obsługuje sytuację, gdy zawodnik przybędzie do tego punktu pomiaru
+     * 
+     * @param biathlete zawodnik przybywający do punktu pomiaru
+     * @param event bieżące zdarzenie
+     */
     @Override
     public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
         biathlete.sendNote(" leaves " + getShootingArea(), event);

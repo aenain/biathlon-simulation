@@ -8,7 +8,8 @@ import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 
 /**
- *
+ * Klasa reprezentująca punkt pomiaru znajdujący się tuż przed strzelnicą.
+ * 
  * @author Artur Hebda
  */
 public class BeforeShootingArea extends ShootingArea {
@@ -16,6 +17,12 @@ public class BeforeShootingArea extends ShootingArea {
         super(owner, name, showInTrace);
     }
 
+    /**
+     * Obsługuje sytuację, gdy zawodnik przybędzie do tego punktu pomiaru.
+     * 
+     * @param biathlete zawodnik przybywający do punktu pomiaru
+     * @param event bieżące zdarzenie
+     */
     @Override
     public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
         biathlete.sendNote(" arrives to " + getShootingArea(), event);

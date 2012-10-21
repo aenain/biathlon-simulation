@@ -1,10 +1,14 @@
+/**
+ * Klasy odpowiedzialne za model symulacji.
+ */
 package biathlon;
 
 import desmoj.core.simulator.Model;
 import java.util.LinkedList;
 
 /**
- *
+ * Klasa reprezentująca poszczególnych zawodników
+ * 
  * @author Artur Hebda
  */
 public class Biathlete extends StaggeredEntity {
@@ -22,6 +26,9 @@ public class Biathlete extends StaggeredEntity {
         return message + " on lap " + getCurrentLap();
     }
     
+    /**
+     * Rozpoczyna kolejne okrążenie podczas biegu zawodnika.
+     */
     public void startNextLap() {
         currentLap++;
     }
@@ -30,15 +37,27 @@ public class Biathlete extends StaggeredEntity {
         return currentLap;
     }
     
+    /**
+     * Rozpoczyna nową serię strzałów.
+     */
     public void beginShootingSession() {
         shots.add(new LinkedList());
         currentShootingSessionMisses = 0;
     }
 
+    /**
+     * 
+     * @return lista true/false oznaczająca, czy zawodnik trafił w danym strzale.
+     */
     public LinkedList<Boolean> getCurrentShootingSession() {
         return shots.getLast();
     }
 
+    /**
+     * Zapisuje rezultat danego strzału.
+     * 
+     * @param hit true - trafione, false - pudło
+     */
     public void saveShotResult(boolean hit) {
         getCurrentShootingSession().add(hit);
         if (!hit) {
@@ -46,6 +65,10 @@ public class Biathlete extends StaggeredEntity {
         }
     }
 
+    /**
+     * 
+     * @return ilość spudłowanych strzałów w danej serii 
+     */
     public int countCurrentShootingSessionMisses() {
         return currentShootingSessionMisses;
     }

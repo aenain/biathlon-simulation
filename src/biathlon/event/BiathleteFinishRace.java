@@ -6,7 +6,8 @@ import desmoj.core.simulator.Event;
 import desmoj.core.simulator.Model;
 
 /**
- *
+ * Zdarzenie 'zawodnik ukończył bieg'
+ * 
  * @author Artur Hebda
  */
 public class BiathleteFinishRace extends Event<Biathlete> {
@@ -14,6 +15,12 @@ public class BiathleteFinishRace extends Event<Biathlete> {
         super(owner, name, showInTrace);
     }
 
+    /**
+     * Wywoływane przy zajściu zdarzenia. Następuje zapis trace'a zawodnika
+     * oraz usunięcie zawodnika z kolejki biatlonistów.
+     * 
+     * @param biathlete zawodnik
+     */
     @Override
     public void eventRoutine(Biathlete biathlete) {
         biathlete.sendNote(" finishes the race ", this);

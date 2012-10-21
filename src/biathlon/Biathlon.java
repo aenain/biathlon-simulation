@@ -16,8 +16,10 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * Klasa odpowiedzialna za model symulacji
+ * 
  * @author Artur Hebda
+ * 
  */
 public class Biathlon extends Model {
     public static int DURATION_IN_MINUTES = 80;
@@ -70,6 +72,12 @@ public class Biathlon extends Model {
         generateBiathletes();
     }
 
+     /**
+     * Metoda inicjująca symulację. Tworzymy w niej wszystkie niezbędne obiekty,
+     * takie jak strzelnicę, rozkłady prawdopodobieńst, kolejki zawodników 
+     * i punktów pomiarowych
+     * 
+     */
     @Override
     public void init() {
         this.shootingArea = new ShootingArea(this, "ShootingArea", true);
@@ -93,32 +101,60 @@ public class Biathlon extends Model {
         checkpoints.last().setNextCheckpoint(checkpoints.first());
     }
 
+     /**
+      * Dodawanie kolejnych trace'ow 
+      */
     public void addTrace(TraceOutput trace) {
         traces.add(trace);
     }
 
+    /**
+     * Opróżnienie i zamknięcie wszystkich trace'ow
+    */
     public void flushAndCloseTraces() {
         for (TraceOutput trace : traces) {
             trace.flushAndClose();
         }
     }
     
+    /**
+     * Losowanie rezultatu danego strzału 
+     * 
+     * @return true - jesli trafiono, false - jeśli pudło
+     */
     public boolean getShotResult() {
         return shotDistStream.sample();
     }
 
+    /**
+     * Oblicza czas przybycia do punktu pomiaru czasu.
+     * 
+     * @return czas przybycia do punktu pomiaru czasu
+     */
     public TimeInstant getCheckpointArrivalTime() {
         return advanceTime(checkpointArrivalTimeInMilliSeconds.sample(), TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * 
+     * @return czas strzału
+     */
     public TimeInstant getShotTime() {
         return advanceTime(shotTimeInMilliSeconds.sample(), TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * 
+     * @return true - gdy każdy zawodnik ukończył bieg, false - w przeciwnym wypadku 
+     */
     public boolean haveAllBiathletesFinished() {
         return biathletes.isEmpty();
     }
 
+    /**
+     * Tworzy i zapisuje w harmonogramie zdarzenie odpowiedzialne za wytworzenie
+     * i start zawodnika.
+     */
     protected void generateBiathletes() {
         BiathleteGenerator biathleteGenerator;
         for (int i = 0; i < BIATHLETE_COUNT; i++) {
@@ -129,6 +165,11 @@ public class Biathlon extends Model {
         }
     }
 
+    /**
+     * 
+     * @param delay opóźnienie
+     * @return obecny czas przesunięty o delay
+     */
     public TimeInstant advanceTime(TimeSpan delay) {
         return TimeOperations.add(presentTime(), delay);
     }
@@ -149,6 +190,11 @@ public class Biathlon extends Model {
         return biathletes;
     }
 
+    /**
+     * Dodaje punkt pomiarowy do kolejki tych puntków.
+     * 
+     * @param checkpoint punkt pomiaru czasu, który chcemy dodać
+     */
     protected void addCheckpoint(Checkpoint checkpoint) {
         Checkpoint lastCheckpoint = checkpoints.last();
         lastCheckpoint.setNextCheckpoint(checkpoint);
