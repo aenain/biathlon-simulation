@@ -3,6 +3,8 @@ package biathlon;
 import biathlon.checkpoint.Checkpoint;
 import biathlon.event.BiathleteGenerator;
 import desmoj.core.dist.BoolDistBernoulli;
+import desmoj.core.dist.ContDistNormal;
+import desmoj.core.dist.ContDistUniform;
 import desmoj.core.report.HTMLTraceOutput;
 import desmoj.core.simulator.Experiment;
 import desmoj.core.simulator.Model;
@@ -29,6 +31,8 @@ public class Biathlon extends Model {
     protected Queue<Checkpoint> checkpoints;
     protected LinkedList<HTMLTraceOutput> traces;
     protected BoolDistBernoulli shotDistStream;
+    protected ContDistNormal checkpointArrivalTimeInMilliSeconds;
+    protected ContDistUniform shotTimeInMilliSeconds;
     
     public Biathlon(Model owner, String modelName, boolean showInReport, boolean showInTrace) {
         super(owner, modelName, showInReport, showInTrace);
@@ -72,7 +76,9 @@ public class Biathlon extends Model {
         this.checkpoints = new Queue(this, "Checkpoints", true, true);
         this.biathletes = new Queue(this, "Biathletes", true, true);
         this.shotDistStream = new BoolDistBernoulli(this, "shotDistStream", 0.7, true, true); // probability for hit
-
+        this.checkpointArrivalTimeInMilliSeconds = new ContDistNormal(this, "checkpointArrivalTimeInMilliSeconds", 170000, 4000, true, true);
+        this.shotTimeInMilliSeconds = new ContDistUniform(this, "shotTimeInMilliSeconds", 2000, 7000, true, true);
+        
         biathlon.checkpoint.BeforeShootingArea beforeShootingArea = new biathlon.checkpoint.BeforeShootingArea(this, "Checkpoint before Shooting Area", true);
         beforeShootingArea.setShootingArea(shootingArea);
 
@@ -85,7 +91,6 @@ public class Biathlon extends Model {
         addCheckpoint(new biathlon.checkpoint.Checkpoint(this, "Checkpoint 4", true));
         addCheckpoint(new biathlon.checkpoint.StartFinish(this, "Start Finish", true));
         checkpoints.last().setNextCheckpoint(checkpoints.first());
-        
     }
 
     public void addTrace(HTMLTraceOutput trace) {
@@ -100,6 +105,14 @@ public class Biathlon extends Model {
     
     public boolean getShotResult() {
         return shotDistStream.sample();
+    }
+
+    public TimeInstant getCheckpointArrivalTime() {
+        return advanceTime(checkpointArrivalTimeInMilliSeconds.sample(), TimeUnit.MILLISECONDS);
+    }
+
+    public TimeInstant getShotTime() {
+        return advanceTime(shotTimeInMilliSeconds.sample(), TimeUnit.MILLISECONDS);
     }
 
     public boolean haveAllBiathletesFinished() {

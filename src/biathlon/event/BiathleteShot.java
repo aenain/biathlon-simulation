@@ -35,7 +35,7 @@ public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
         // jesli nie oddal 5 strzalow w serii, powtorz strzelanie
         if (biathlete.getCurrentShootingSession().size() < 5) {
             BiathleteShot biathleteShot = new BiathleteShot(model, "BiathleteShotEvent", true);
-            biathleteShot.schedule(biathlete, shootingArea, model.advanceTime(new TimeSpan(12, TimeUnit.SECONDS)));
+            biathleteShot.schedule(biathlete, shootingArea, model.getShotTime());
         }
         // w przeciwnym razie dolicz ewentualne kary i odwiedz checkpoint zaraz za strzelnica
         else {

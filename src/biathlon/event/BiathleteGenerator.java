@@ -32,6 +32,6 @@ public class BiathleteGenerator extends ExternalEvent {
         model.getBiathletes().insert(biathlete);
         
         // zaschedule'uj event do nastepnego punktu pomiaru czasu
-        Checkpoint.scheduleArrival(model.getCheckpoints().first(), biathlete, new TimeSpan(12, TimeUnit.MINUTES));
+        Checkpoint.scheduleArrival(model.getCheckpoints().first(), biathlete, model.getCheckpointArrivalTime());
     }
 }

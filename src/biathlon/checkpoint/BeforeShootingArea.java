@@ -1,13 +1,10 @@
 package biathlon.checkpoint;
 
 import biathlon.Biathlete;
+import biathlon.Biathlon;
 import biathlon.event.BiathleteShot;
 import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
-import desmoj.core.simulator.TimeInstant;
-import desmoj.core.simulator.TimeOperations;
-import desmoj.core.simulator.TimeSpan;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -23,8 +20,8 @@ public class BeforeShootingArea extends ShootingArea {
         biathlete.sendNote(" arrives to " + getShootingArea(), event);
         biathlete.beginShootingSession();
 
-        TimeInstant now = biathlete.presentTime();
+        Biathlon model = (Biathlon)getModel();
         BiathleteShot biathleteShot = new BiathleteShot(getModel(), "BiathleteShotEvent", true);
-        biathleteShot.schedule(biathlete, getShootingArea(), TimeOperations.add(now, new TimeSpan(12, TimeUnit.SECONDS)));
+        biathleteShot.schedule(biathlete, getShootingArea(), model.getShotTime());
     }
 }
