@@ -3,7 +3,9 @@ package biathlon.checkpoint;
 import biathlon.Biathlete;
 import biathlon.Biathlon;
 import biathlon.Entity;
+import biathlon.report.LazyTraceOutput;
 import biathlon.event.BiathleteArrivalAtCheckpoint;
+import biathlon.event.BiathleteEvent;
 import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;
@@ -18,7 +20,7 @@ public class Checkpoint extends Entity {
     protected Checkpoint nextCheckpoint;
 
     public Checkpoint(Model owner, String name, boolean showInTrace) {
-        super(owner, name, showInTrace);
+        super(owner, name, showInTrace, true);
     }
 
     public void setNextCheckpoint(Checkpoint checkpoint) {
@@ -27,6 +29,7 @@ public class Checkpoint extends Entity {
 
     public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
         biathlete.sendNote(" arrives to " + this, event);
+        sendNote(biathlete.toString() + " arrives on lap " + biathlete.getCurrentLap(), event, new BiathleteEvent(biathlete));
         scheduleNextCheckpoint(biathlete);
     }
 

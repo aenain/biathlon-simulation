@@ -2,6 +2,7 @@ package biathlon.checkpoint;
 
 import biathlon.Biathlete;
 import biathlon.Biathlon;
+import biathlon.event.BiathleteEvent;
 import biathlon.event.BiathleteFinishRace;
 import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
@@ -21,10 +22,12 @@ public class StartFinish extends Checkpoint {
 
         if (biathlete.getCurrentLap() > Biathlon.LAPS) {
             BiathleteFinishRace biathleteFinishRace = new BiathleteFinishRace(getModel(), "BiathleteFinishRaceEvent", true);
+            trace.sendNote(biathlete.toString() + " finishes the race", event, new BiathleteEvent(biathlete));
             biathleteFinishRace.schedule(biathlete, presentTime());
         }
         else {
             biathlete.sendNote(" arrives to " + this, event);
+            trace.sendNote(biathlete.toString() + " starts lap " + biathlete.getCurrentLap(), event, new BiathleteEvent(biathlete));
             scheduleNextCheckpoint(biathlete);
         }
     }

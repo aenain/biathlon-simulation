@@ -17,9 +17,7 @@ public class BiathleteFinishRace extends Event<Biathlete> {
     @Override
     public void eventRoutine(Biathlete biathlete) {
         biathlete.sendNote(" finishes the race ", this);
-        System.out.println(biathlete.toString() + " finishes the race in " + biathlete.lifeTime());
         Biathlon race = (Biathlon)getModel();
         race.getBiathletes().remove(biathlete);
     }
-    
 }

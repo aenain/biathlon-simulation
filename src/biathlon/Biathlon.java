@@ -1,11 +1,11 @@
 package biathlon;
 
+import biathlon.report.TraceOutput;
 import biathlon.checkpoint.Checkpoint;
 import biathlon.event.BiathleteGenerator;
 import desmoj.core.dist.BoolDistBernoulli;
 import desmoj.core.dist.ContDistNormal;
 import desmoj.core.dist.ContDistUniform;
-import desmoj.core.report.HTMLTraceOutput;
 import desmoj.core.simulator.Experiment;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.Queue;
@@ -29,7 +29,7 @@ public class Biathlon extends Model {
     protected Queue<Biathlete> biathletes;
     protected ShootingArea shootingArea;
     protected Queue<Checkpoint> checkpoints;
-    protected LinkedList<HTMLTraceOutput> traces;
+    protected LinkedList<TraceOutput> traces;
     protected BoolDistBernoulli shotDistStream;
     protected ContDistNormal checkpointArrivalTimeInMilliSeconds;
     protected ContDistUniform shotTimeInMilliSeconds;
@@ -57,7 +57,7 @@ public class Biathlon extends Model {
         experiment.start();
         experiment.report();
         experiment.finish();
-        model.closeTraces();
+        model.flushAndCloseTraces();
     }
 
     @Override
@@ -93,13 +93,13 @@ public class Biathlon extends Model {
         checkpoints.last().setNextCheckpoint(checkpoints.first());
     }
 
-    public void addTrace(HTMLTraceOutput trace) {
+    public void addTrace(TraceOutput trace) {
         traces.add(trace);
     }
 
-    public void closeTraces() {
-        for(HTMLTraceOutput trace : traces) {
-            trace.close();
+    public void flushAndCloseTraces() {
+        for (TraceOutput trace : traces) {
+            trace.flushAndClose();
         }
     }
     

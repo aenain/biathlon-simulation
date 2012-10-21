@@ -1,6 +1,7 @@
 package biathlon.checkpoint;
 
 import biathlon.Biathlete;
+import biathlon.event.BiathleteEvent;
 import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 
@@ -22,6 +23,7 @@ public class AfterShootingArea extends ShootingArea {
     @Override
     public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
         biathlete.sendNote(" leaves " + getShootingArea(), event);
+        sendNote(biathlete.toString() + " arrives on lap " + biathlete.getCurrentLap(), event, new BiathleteEvent(biathlete));
         scheduleNextCheckpoint(biathlete);
     }
 }

@@ -1,7 +1,8 @@
 package biathlon;
 
-import desmoj.core.report.HTMLTraceOutput;
-import desmoj.core.report.TraceNote;
+import biathlon.event.BiathleteEvent;
+import biathlon.report.LazyTraceOutput;
+import biathlon.report.TraceOutput;
 import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;
@@ -11,16 +12,31 @@ import desmoj.core.simulator.TimeInstant;
  * @author Artur Hebda
  */
 public class Entity extends desmoj.core.simulator.Entity {
-    protected HTMLTraceOutput trace = new HTMLTraceOutput();
+    protected TraceOutput trace;
     protected String name;
 
     public Entity(Model owner, String name, boolean showInTrace) {
         super(owner, name, showInTrace);
         this.name = name;
+        setTrace(new TraceOutput(this));
+    }
 
-        trace.open("traces/" + this.getClass().getName(), name);
-        trace.setTimeFloats(100);
-        ((Biathlon)owner).addTrace(trace);
+    public Entity(Model owner, String name, boolean showInTrace, boolean lazyOutput) {
+        super(owner, name, showInTrace);
+        this.name = name;
+
+        if (lazyOutput) {
+            setTrace(new LazyTraceOutput(this));
+        }
+        else {
+            setTrace(new TraceOutput(this));
+        }
+    }
+
+    protected final void setTrace(TraceOutput trace) {
+        this.trace = trace;
+        Biathlon model = (Biathlon)getModel();
+        model.addTrace(trace);
     }
 
     @Override
@@ -33,8 +49,11 @@ public class Entity extends desmoj.core.simulator.Entity {
     }
 
     public void sendNote(String message, EventAbstract event) {
-        TraceNote note = new TraceNote(getModel(), formatMessage(message), lifeTime(), this, event);
-        trace.receive(note);
+        trace.sendNote(formatMessage(message), event, null);
+    }
+
+    public void sendNote(String message, EventAbstract event, BiathleteEvent biathleteEvent) {
+        trace.sendNote(formatMessage(message), event, biathleteEvent);
     }
 
     public TimeInstant lifeTime() {

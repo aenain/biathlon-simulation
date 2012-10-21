@@ -6,8 +6,6 @@ import biathlon.ShootingArea;
 import biathlon.checkpoint.Checkpoint;
 import desmoj.core.simulator.EventOf2Entities;
 import desmoj.core.simulator.Model;
-import desmoj.core.simulator.TimeInstant;
-import desmoj.core.simulator.TimeOperations;
 import desmoj.core.simulator.TimeSpan;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +29,7 @@ public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
         if (hit) { message = " shots on target "; }
         else { message = " shots and misses "; }
         biathlete.sendNote(message, this);
+        shootingArea.sendNote(biathlete.toString() + message + "on lap " + biathlete.getCurrentLap(), this, new BiathleteEvent(biathlete));
 
         // jesli nie oddal 5 strzalow w serii, powtorz strzelanie
         if (biathlete.getCurrentShootingSession().size() < 5) {
