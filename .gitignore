@@ -1,2 +1,6 @@
 /build/
 /dist/
+/nbproject/private/
+/traces/**/*.html
+/traces/**/*.txt
+/*.html
