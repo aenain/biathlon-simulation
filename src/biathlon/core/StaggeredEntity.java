@@ -1,4 +1,4 @@
-package biathlon;
+package biathlon.core;
 
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;

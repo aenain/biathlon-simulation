@@ -5,8 +5,6 @@ import biathlon.Biathlon;
 import biathlon.checkpoint.Checkpoint;
 import desmoj.core.simulator.ExternalEvent;
 import desmoj.core.simulator.Model;
-import desmoj.core.simulator.TimeSpan;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Zdarzenie 'wygeneruj i wystaruj zawodnika'.
@@ -34,7 +32,8 @@ public class BiathleteGenerator extends ExternalEvent {
         Biathlete biathlete = new Biathlete(model, "Biathlete: " + number, true);
         number++;
 
-        biathlete.sendNote(" has been created and starts the race!", this);
+        biathlete.addEvent(new BiathleteEvent(biathlete, "starts the race"));
+
         // dodaj do kolejki
         model.getBiathletes().insert(biathlete);
         

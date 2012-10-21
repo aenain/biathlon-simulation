@@ -2,7 +2,7 @@ package biathlon.checkpoint;
 
 import biathlon.Biathlete;
 import biathlon.Biathlon;
-import biathlon.Entity;
+import biathlon.core.Entity;
 import biathlon.event.BiathleteArrivalAtCheckpoint;
 import biathlon.event.BiathleteEvent;
 import desmoj.core.simulator.EventAbstract;
@@ -10,6 +10,8 @@ import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;
 import desmoj.core.simulator.TimeOperations;
 import desmoj.core.simulator.TimeSpan;
+import java.util.Collections;
+import java.util.LinkedList;
 
 /**
  * Klasa odpowiedzialna za punkt pomiaru czasu. Dziedziczą z niej klasy
@@ -21,7 +23,38 @@ public class Checkpoint extends Entity {
     protected Checkpoint nextCheckpoint;
 
     public Checkpoint(Model owner, String name, boolean showInTrace) {
-        super(owner, name, showInTrace, true);
+        super(owner, name, showInTrace);
+    }
+
+    @Override
+    public void generateTrace() {
+        LinkedList<BiathleteEvent> events;
+        BiathleteEvent event;
+        TimeInstant firstEventAt;
+
+        for (int i = 0; i < Biathlon.LAPS; i++) {
+            events = eventsByLap.get(i);
+            Collections.sort(events);
+            trace.startSection("Lap " + (i + 1));
+            trace.startTable("Position", "Name", "Time", "Lost");
+        
+            if (events.size() > 0) {
+                firstEventAt = events.getFirst().getBiathleteTime();
+                for (int j = 0; j < events.size(); j++) {
+                    event = events.get(j);
+                    event.setRank(new Integer(j + 1));
+                    event.setLost(TimeOperations.diff(firstEventAt, event.getBiathleteTime()));
+                    trace.insertRow(event.getRank(),
+                                    event.getBiathlete(),
+                                    event.getBiathleteTime(),
+                                    event.getLost());
+                }
+            }
+            trace.closeTable();
+            trace.closeSection();
+        }
+
+        trace.close();
     }
 
     public void setNextCheckpoint(Checkpoint checkpoint) {
@@ -35,9 +68,17 @@ public class Checkpoint extends Entity {
      * @param event bieżące zdarzenie
      */
     public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
-        biathlete.sendNote(" arrives to " + this, event);
-        sendNote(biathlete.toString() + " arrives on lap " + biathlete.getCurrentLap(), event, new BiathleteEvent(biathlete));
+        storeBiathleteArrival(biathlete);
         scheduleNextCheckpoint(biathlete);
+    }
+
+    /*
+     * Tworzy BiathleteEvent i dodaje go do listy zdarzeń zawodnika i punktu pomiaru czasu.
+     */
+    protected void storeBiathleteArrival(Biathlete biathlete) {
+        BiathleteEvent arrival = new BiathleteEvent(biathlete, "arrives at " + this);
+        biathlete.addEvent(arrival);
+        eventsByLap.get(biathlete.getCurrentLap() - 1).add(arrival);
     }
 
     /**

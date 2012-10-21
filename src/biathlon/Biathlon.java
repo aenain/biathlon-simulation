@@ -1,8 +1,8 @@
 package biathlon;
 
-import biathlon.report.TraceOutput;
 import biathlon.checkpoint.Checkpoint;
 import biathlon.event.BiathleteGenerator;
+import biathlon.report.HTMLFileOutput;
 import desmoj.core.dist.BoolDistBernoulli;
 import desmoj.core.dist.ContDistNormal;
 import desmoj.core.dist.ContDistUniform;
@@ -31,10 +31,11 @@ public class Biathlon extends Model {
     protected Queue<Biathlete> biathletes;
     protected ShootingArea shootingArea;
     protected Queue<Checkpoint> checkpoints;
-    protected LinkedList<TraceOutput> traces;
+    protected LinkedList<HTMLFileOutput> traces;
     protected BoolDistBernoulli shotDistStream;
     protected ContDistNormal checkpointArrivalTimeInMilliSeconds;
     protected ContDistUniform shotTimeInMilliSeconds;
+    protected int finishCount = 0;
     
     public Biathlon(Model owner, String modelName, boolean showInReport, boolean showInTrace) {
         super(owner, modelName, showInReport, showInTrace);
@@ -59,7 +60,7 @@ public class Biathlon extends Model {
         experiment.start();
         experiment.report();
         experiment.finish();
-        model.flushAndCloseTraces();
+        model.generateTraces();
     }
 
     @Override
@@ -83,8 +84,8 @@ public class Biathlon extends Model {
         this.shootingArea = new ShootingArea(this, "ShootingArea", true);
         this.checkpoints = new Queue(this, "Checkpoints", true, true);
         this.biathletes = new Queue(this, "Biathletes", true, true);
-        this.shotDistStream = new BoolDistBernoulli(this, "shotDistStream", 0.7, true, true); // probability for hit
-        this.checkpointArrivalTimeInMilliSeconds = new ContDistNormal(this, "checkpointArrivalTimeInMilliSeconds", 170000, 4000, true, true);
+        this.shotDistStream = new BoolDistBernoulli(this, "shotDistStream", 0.8, true, true); // probability for hit
+        this.checkpointArrivalTimeInMilliSeconds = new ContDistNormal(this, "checkpointArrivalTimeInMilliSeconds", 185000, 12000, true, true);
         this.shotTimeInMilliSeconds = new ContDistUniform(this, "shotTimeInMilliSeconds", 2000, 7000, true, true);
         
         biathlon.checkpoint.BeforeShootingArea beforeShootingArea = new biathlon.checkpoint.BeforeShootingArea(this, "Checkpoint before Shooting Area", true);
@@ -101,19 +102,19 @@ public class Biathlon extends Model {
         checkpoints.last().setNextCheckpoint(checkpoints.first());
     }
 
-     /**
-      * Dodawanie kolejnych trace'ow 
-      */
-    public void addTrace(TraceOutput trace) {
-        traces.add(trace);
-    }
-
-    /**
-     * Opróżnienie i zamknięcie wszystkich trace'ow
-    */
-    public void flushAndCloseTraces() {
-        for (TraceOutput trace : traces) {
-            trace.flushAndClose();
+    /*
+     * Wygenerowanie trace'ów dla punktów pomiaru czasu, strzelnicy i zawodników.
+     * Ważne jest, by na końcu generować dla zawodników, gdyż generowanie trace'ów
+     * dla punktów pomiaru czasu pozwala ustalić, na której pozycji był zawodnik
+     * na danym punkcie pomiaru czasu.
+     */
+    public void generateTraces() {
+        for (Checkpoint checkpoint : checkpoints) {
+            checkpoint.generateTrace();
+        }
+        shootingArea.generateTrace();
+        for (Biathlete biathlete : biathletes) {
+            biathlete.generateTrace();
         }
     }
     
@@ -148,7 +149,11 @@ public class Biathlon extends Model {
      * @return true - gdy każdy zawodnik ukończył bieg, false - w przeciwnym wypadku 
      */
     public boolean haveAllBiathletesFinished() {
-        return biathletes.isEmpty();
+        return finishCount == BIATHLETE_COUNT;
+    }
+
+    public void incrementFinishCount() {
+        finishCount++;
     }
 
     /**

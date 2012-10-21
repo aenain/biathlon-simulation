@@ -38,9 +38,8 @@ public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
         biathlete.saveShotResult(hit);
         if (hit) { message = " shots on target "; }
         else { message = " shots and misses "; }
-        biathlete.sendNote(message, this);
-        shootingArea.sendNote(biathlete.toString() + message + "on lap " + biathlete.getCurrentLap(), this, new BiathleteEvent(biathlete));
-
+        shootingArea.storeShot(biathlete, message);
+ 
         // jesli nie oddal 5 strzalow w serii, powtorz strzelanie
         if (biathlete.getCurrentShootingSession().size() < 5) {
             BiathleteShot biathleteShot = new BiathleteShot(model, "BiathleteShotEvent", true);
