@@ -3,7 +3,6 @@ package biathlon.checkpoint;
 import biathlon.Biathlete;
 import biathlon.Biathlon;
 import biathlon.Entity;
-import biathlon.report.LazyTraceOutput;
 import biathlon.event.BiathleteArrivalAtCheckpoint;
 import biathlon.event.BiathleteEvent;
 import desmoj.core.simulator.EventAbstract;
