@@ -23,7 +23,7 @@ public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
      * Wywoływane podczas zajścia zdarzenia. Losuje i zapisuje rezultat danego strzału.
      * Następnie, jeśli ilość wykonanych strzałów jest mniejsza niż 5, to dodaje
      * do harmonogramu zdarzenie kolejnego strzału. W przeciwnym wypadku oblicza
-     * karny czas.
+     * karny czas i przenosi zawodnika do punktu pomiaru czasu za strzelnicą.
      * 
      * @param biathlete
      * @param shootingArea 

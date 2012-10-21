@@ -4,7 +4,6 @@ import biathlon.Biathlete;
 import biathlon.Biathlon;
 import biathlon.event.BiathleteEvent;
 import biathlon.event.BiathleteFinishRace;
-import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;
 import desmoj.core.simulator.TimeOperations;
@@ -12,7 +11,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 /**
- * Klasa opisująca punkt pomiaru znajdujący się na linii początku okrążenia.
+ * Klasa opisująca punkt pomiaru znajdujący się na linii startu/mety.
+ * Została przyjęta konwencja, że ten punkt jest jako ostatni na okrążeniu.
  * 
  * @author Artur Hebda
  */
@@ -22,13 +22,18 @@ public class StartFinish extends Checkpoint {
     }
 
     /**
-     * Obsługuje sytuację, gdy zawodnik przybędzie do tego punktu pomiaru.
+     * Obsługa przybycia zawodnika do linii startu/mety.
+     * Jeśli był na ostatnim okrążeniu, to kończy się dla niego bieg. Jest tworzony
+     * event i dodawany do zawodnika i do linii startu/mety.
+     * Jest schedule'owany dodatkowo event BiathleteFinishRaceEvent.
+     * Jeśli wszyscy zawodnicy dotarli do mety, jest generowany dodatkowy trace - Final Results.
      * 
-     * @param biathlete zawodnik przybywający do punktu pomiaru
-     * @param event bieżące zdarzenie
+     * Jeśli to nie było ostatnie okrążenie, to zawodnik biegnie dalej - jest schedule'owane dotarcie
+     * do następnego punktu pomiaru czasu.
+     * @param biathlete 
      */
     @Override
-    public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
+    public void biathleteArrived(Biathlete biathlete) {
         if (biathlete.getCurrentLap() >= Biathlon.LAPS) {
             BiathleteEvent finish = new BiathleteEvent(biathlete, "finishes the race");
             biathlete.addEvent(finish);
@@ -41,11 +46,15 @@ public class StartFinish extends Checkpoint {
             }
         }
         else {
-            super.biathleteArrived(biathlete, event);
+            super.biathleteArrived(biathlete);
             biathlete.startNextLap();
         }
     }
 
+    /**
+     * Generowanie dodatkowego trace'a zawierającego ostateczne wyniki biegu.
+     * Uwzględnia liczbę niecelnych strzałów na każdym okrążeniu.
+     */
     public void generateFinalTrace() {
         biathlon.report.HTMLFileOutput html = new biathlon.report.HTMLFileOutput(this, "Final Results", "final_results");
         html.startSection("Results");

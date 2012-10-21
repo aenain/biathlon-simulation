@@ -3,9 +3,11 @@ package biathlon.checkpoint;
 import desmoj.core.simulator.Model;
 
 /**
- * Klasa reprezentująca strzelnicę
+ * Klasa zapewniająca funkcjonalności związane ze strzelnicą punktom pomiaru czasu.
+ * Nie jest jawnie używana.
  * 
  * @author Artur Hebda
+ * @see AfterShootingArea, BeforeShootingArea
  */
 public class ShootingArea extends Checkpoint {
     protected biathlon.ShootingArea shootingArea;

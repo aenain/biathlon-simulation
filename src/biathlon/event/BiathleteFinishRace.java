@@ -16,8 +16,8 @@ public class BiathleteFinishRace extends Event<Biathlete> {
     }
 
     /**
-     * Wywoływane przy zajściu zdarzenia. Następuje zapis trace'a zawodnika
-     * oraz usunięcie zawodnika z kolejki biatlonistów.
+     * Wywoływane przy zajściu zdarzenia.
+     * Jest zwiększana liczba zawodników, którzy skończyli wyścig.
      * 
      * @param biathlete zawodnik
      */

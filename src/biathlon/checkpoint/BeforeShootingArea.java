@@ -3,7 +3,6 @@ package biathlon.checkpoint;
 import biathlon.Biathlete;
 import biathlon.Biathlon;
 import biathlon.event.BiathleteShot;
-import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 
 /**
@@ -17,13 +16,14 @@ public class BeforeShootingArea extends ShootingArea {
     }
 
     /**
-     * Obsługuje sytuację, gdy zawodnik przybędzie do tego punktu pomiaru.
+     * Gdy zawodnik dotrze do punktu tuż przed strzelnicą, zacznie strzelać.
+     * W związku z tym jest rozpoczynana nowa seria strzałów i schedule'owany event pierwszego strzału.
      * 
-     * @param biathlete zawodnik przybywający do punktu pomiaru
-     * @param event bieżące zdarzenie
+     * @param biathlete zawodnik, który dotarł do tego punktu pomiaru
+     * @see biathlon.event.BiathleteShot
      */
     @Override
-    public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
+    public void biathleteArrived(Biathlete biathlete) {
         storeBiathleteArrival(biathlete);
         biathlete.beginShootingSession();
 

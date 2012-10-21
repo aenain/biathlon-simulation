@@ -7,7 +7,7 @@ import desmoj.core.simulator.ExternalEvent;
 import desmoj.core.simulator.Model;
 
 /**
- * Zdarzenie 'wygeneruj i wystaruj zawodnika'.
+ * Zdarzenie 'wygeneruj i wystartuj zawodnika'.
  * 
  * @author Artur Hebda
  */

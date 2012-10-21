@@ -27,6 +27,6 @@ public class BiathleteArrivalAtCheckpoint extends EventOf2Entities<Biathlete, Ch
      */
     @Override
     public void eventRoutine(Biathlete biathlete, Checkpoint checkpoint) {
-        checkpoint.biathleteArrived(biathlete, this);
+        checkpoint.biathleteArrived(biathlete);
     }
 }

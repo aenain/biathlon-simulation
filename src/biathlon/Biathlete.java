@@ -1,5 +1,5 @@
 /**
- * Klasy odpowiedzialne za model symulacji.
+ * Podstawowy pakiet symulacji.
  */
 package biathlon;
 
@@ -9,24 +9,39 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 /**
- * Klasa reprezentująca poszczególnych zawodników
+ * Klasa reprezentująca poszczególnych zawodników.
  * 
  * @author Artur Hebda
+ * @see biathlon.core.StaggeredEntity
  */
 public class Biathlete extends biathlon.core.StaggeredEntity {
+    
     protected LinkedList<LinkedList<Boolean>> shots;
     protected int currentShootingSessionMisses = 0;
     protected int currentLap = 1;
 
+    /**
+     * @see biathlon.core.StaggeredEntity 
+     */
     public Biathlete(Model owner, String name, boolean showInTrace) {
         super(owner, name, showInTrace);
         shots = new LinkedList();
     }
 
+    /**
+     * Dodaje event na obecnym okrążeniu.
+     * @param event reprezentuje event, którego czas musiał zostać zamrożony dla chwili wystąpienia, np. oddanie strzału 
+     */
     public void addEvent(BiathleteEvent event) {
         eventsByLap.get(currentLap - 1).add(event);
     }
 
+    /**
+     * Generuje trace dla zawodnika z przebiegu całego wyścigu.
+     * Przed wywołaniem tej metody należy wywołać analogiczną metodę
+     * dla punktów pomiaru czasu i strzelnicy (ustalenie pozycji i straty do lidera
+     * na danym punkcie).
+     */
     @Override
     public void generateTrace() {
         LinkedList<BiathleteEvent> events;
@@ -67,7 +82,7 @@ public class Biathlete extends biathlon.core.StaggeredEntity {
         currentShootingSessionMisses = 0;
     }
 
-    /*
+    /**
      * @return lista list true/false oznaczająca, czy zawodnik trafił w kolejnych strzałach w kolejnych seriach
      */
     public LinkedList<LinkedList<Boolean>> getShotResults() {
@@ -85,7 +100,7 @@ public class Biathlete extends biathlon.core.StaggeredEntity {
     /**
      * Zapisuje rezultat danego strzału.
      * 
-     * @param hit true - trafione, false - pudło
+     * @param hit true (trafienie), false (pudło)
      */
     public void saveShotResult(boolean hit) {
         getCurrentShootingSession().add(hit);
@@ -96,7 +111,7 @@ public class Biathlete extends biathlon.core.StaggeredEntity {
 
     /**
      * 
-     * @return ilość spudłowanych strzałów w danej serii 
+     * @return ilość niecelnych strzałów w obecnej / ostatniej serii 
      */
     public int countCurrentShootingSessionMisses() {
         return currentShootingSessionMisses;

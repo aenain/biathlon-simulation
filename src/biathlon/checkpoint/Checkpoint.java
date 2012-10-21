@@ -5,7 +5,6 @@ import biathlon.Biathlon;
 import biathlon.core.Entity;
 import biathlon.event.BiathleteArrivalAtCheckpoint;
 import biathlon.event.BiathleteEvent;
-import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;
 import desmoj.core.simulator.TimeOperations;
@@ -14,8 +13,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 /**
- * Klasa odpowiedzialna za punkt pomiaru czasu. Dziedziczą z niej klasy
- * odpowiadające za różne typy punktów.
+ * Klasa odpowiedzialna za punkty pomiaru czasu.
+ * Dziedziczą z niej klasy odpowiadające za różne typy punktów.
  * 
  * @author Artur Hebda
  */
@@ -26,6 +25,11 @@ public class Checkpoint extends Entity {
         super(owner, name, showInTrace);
     }
 
+    /**
+     * Generowanie trace'a dla punktu pomiaru czasu.
+     * Wymaga posortowania zawodników według czasu ich przybycia, dlatego tę metodę
+     * dla wszystkich checkpointów należy wywołać przed analogiczną metodą z klasy biathlon.Biathlete.
+     */
     @Override
     public void generateTrace() {
         LinkedList<BiathleteEvent> events;
@@ -57,23 +61,31 @@ public class Checkpoint extends Entity {
         trace.close();
     }
 
+    /**
+     * Ustanawia relację poprzednik - następnik między kolejnymi punktami pomiaru czasu.
+     * @param checkpoint następny punkt pomiaru czasu. W przypadku linii startu mety (jeśli
+     * jest ostatnim checkpointem) należy za nextCheckpoint uznać pierwszy checkpoint (czyli stworzyć pętlę relacji).
+     */
     public void setNextCheckpoint(Checkpoint checkpoint) {
         this.nextCheckpoint = checkpoint;
     }
 
     /**
      * Obsługuje sytuację, gdy zawodnik przybędzie do tego punktu pomiaru.
+     * Stworzy BiathleteEvent, który doda do listy zdarzeń zawodnika i punktu pomiaru czasu,
+     * a także zadba o dotarcie zawodnika do kolejnego punktu pomiaru czasu.
      * 
      * @param biathlete zawodnik przybywający do punktu pomiaru
-     * @param event bieżące zdarzenie
      */
-    public void biathleteArrived(Biathlete biathlete, EventAbstract event) {
+    public void biathleteArrived(Biathlete biathlete) {
         storeBiathleteArrival(biathlete);
         scheduleNextCheckpoint(biathlete);
     }
 
-    /*
+    /**
      * Tworzy BiathleteEvent i dodaje go do listy zdarzeń zawodnika i punktu pomiaru czasu.
+     * 
+     * @param biathlete zawodnik przybywający do punktu pomiaru
      */
     protected void storeBiathleteArrival(Biathlete biathlete) {
         BiathleteEvent arrival = new BiathleteEvent(biathlete, "arrives at " + this);
