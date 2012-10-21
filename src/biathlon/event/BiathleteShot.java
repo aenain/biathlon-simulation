@@ -3,9 +3,12 @@ package biathlon.event;
 import biathlon.Biathlete;
 import biathlon.Biathlon;
 import biathlon.ShootingArea;
+import biathlon.checkpoint.Checkpoint;
 import desmoj.core.simulator.EventOf2Entities;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;
+import desmoj.core.simulator.TimeOperations;
+import desmoj.core.simulator.TimeSpan;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,7 +25,7 @@ public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
         Biathlon model = (Biathlon)getModel();
 
         String message;
-        boolean hit = true;
+        boolean hit = model.getShotResult();
 
         biathlete.saveShotResult(hit);
         if (hit) { message = " shots on target "; }
@@ -32,14 +35,12 @@ public class BiathleteShot extends EventOf2Entities<Biathlete, ShootingArea> {
         // jesli nie oddal 5 strzalow w serii, powtorz strzelanie
         if (biathlete.getCurrentShootingSession().size() < 5) {
             BiathleteShot biathleteShot = new BiathleteShot(model, "BiathleteShotEvent", true);
-            biathleteShot.schedule(biathlete, shootingArea, new TimeInstant(12, TimeUnit.SECONDS));
+            biathleteShot.schedule(biathlete, shootingArea, model.advanceTime(new TimeSpan(12, TimeUnit.SECONDS)));
         }
         // w przeciwnym razie dolicz ewentualne kary i odwiedz checkpoint zaraz za strzelnica
         else {
             int missCount = biathlete.countCurrentShootingSessionMisses();
-            BiathleteArrivalAtCheckpoint biathleteAtCheckpointArrival = new BiathleteArrivalAtCheckpoint(getModel(), "BiathletAtCheckpointArrivalEvent", true);
-            biathleteAtCheckpointArrival.schedule(biathlete, shootingArea.getAfterCheckpoint(), new TimeInstant(missCount * Biathlon.MISS_PENALTY_IN_SECONDS, TimeUnit.SECONDS));
+            Checkpoint.scheduleArrival(shootingArea.getAfterCheckpoint(), biathlete, new TimeSpan(missCount * Biathlon.MISS_PENALTY_IN_SECONDS, TimeUnit.SECONDS));
         }
     }
-    
 }

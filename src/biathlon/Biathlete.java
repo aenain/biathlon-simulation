@@ -1,7 +1,5 @@
 package biathlon;
 
-import desmoj.core.report.TraceNote;
-import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 import java.util.LinkedList;
 
@@ -21,7 +19,7 @@ public class Biathlete extends StaggeredEntity {
 
     @Override
     public String formatMessage(String message) {
-        return name + " " + message + " on lap " + getCurrentLap();
+        return message + " on lap " + getCurrentLap();
     }
     
     public void startNextLap() {

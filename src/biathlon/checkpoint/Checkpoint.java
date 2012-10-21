@@ -6,6 +6,8 @@ import biathlon.event.BiathleteArrivalAtCheckpoint;
 import desmoj.core.simulator.EventAbstract;
 import desmoj.core.simulator.Model;
 import desmoj.core.simulator.TimeInstant;
+import desmoj.core.simulator.TimeOperations;
+import desmoj.core.simulator.TimeSpan;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,11 +31,12 @@ public class Checkpoint extends Entity {
     }
 
     public void scheduleNextCheckpoint(Biathlete biathlete) {
-        Checkpoint.scheduleArrival(nextCheckpoint, biathlete, new TimeInstant(12, TimeUnit.MINUTES));
+        Checkpoint.scheduleArrival(nextCheckpoint, biathlete, new TimeSpan(12, TimeUnit.MINUTES));
     }
 
-    public static void scheduleArrival(Checkpoint checkpoint, Biathlete biathlete, TimeInstant at) {
+    public static void scheduleArrival(Checkpoint checkpoint, Biathlete biathlete, TimeSpan delay) {
+        TimeInstant now = checkpoint.presentTime();
         BiathleteArrivalAtCheckpoint arrivalAtCheckpoint = new BiathleteArrivalAtCheckpoint(checkpoint.getModel(), "BiathletAtCheckpointArrivalEvent", true);
-        arrivalAtCheckpoint.schedule(biathlete, checkpoint, at);
+        arrivalAtCheckpoint.schedule(biathlete, checkpoint, TimeOperations.add(now, delay));
     }
 }

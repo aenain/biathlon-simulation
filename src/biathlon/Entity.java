@@ -20,6 +20,7 @@ public class Entity extends desmoj.core.simulator.Entity {
 
         trace.open("traces/" + this.getClass().getName(), name);
         trace.setTimeFloats(100);
+        ((Biathlon)owner).addTrace(trace);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class Entity extends desmoj.core.simulator.Entity {
     }
 
     public String formatMessage(String message) {
-        return name + " " + message;
+        return message;
     }
 
     public void sendNote(String message, EventAbstract event) {

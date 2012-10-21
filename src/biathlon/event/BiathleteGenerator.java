@@ -5,7 +5,7 @@ import biathlon.Biathlon;
 import biathlon.checkpoint.Checkpoint;
 import desmoj.core.simulator.ExternalEvent;
 import desmoj.core.simulator.Model;
-import desmoj.core.simulator.TimeInstant;
+import desmoj.core.simulator.TimeSpan;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,7 +30,8 @@ public class BiathleteGenerator extends ExternalEvent {
         biathlete.sendNote(" has been created and starts the race!", this);
         // dodaj do kolejki
         model.getBiathletes().insert(biathlete);
+        
         // zaschedule'uj event do nastepnego punktu pomiaru czasu
-        Checkpoint.scheduleArrival(model.getCheckpoints().first(), biathlete, new TimeInstant(12, TimeUnit.MINUTES));
+        Checkpoint.scheduleArrival(model.getCheckpoints().first(), biathlete, new TimeSpan(12, TimeUnit.MINUTES));
     }
 }

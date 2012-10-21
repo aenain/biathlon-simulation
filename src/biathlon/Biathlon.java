@@ -2,9 +2,15 @@ package biathlon;
 
 import biathlon.checkpoint.Checkpoint;
 import biathlon.event.BiathleteGenerator;
-import desmoj.core.simulator.*;
-import desmoj.core.dist.*;
-import desmoj.core.statistic.*;
+import desmoj.core.dist.BoolDistBernoulli;
+import desmoj.core.report.HTMLTraceOutput;
+import desmoj.core.simulator.Experiment;
+import desmoj.core.simulator.Model;
+import desmoj.core.simulator.Queue;
+import desmoj.core.simulator.TimeInstant;
+import desmoj.core.simulator.TimeOperations;
+import desmoj.core.simulator.TimeSpan;
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,9 +27,12 @@ public class Biathlon extends Model {
     protected Queue<Biathlete> biathletes;
     protected ShootingArea shootingArea;
     protected Queue<Checkpoint> checkpoints;
+    protected LinkedList<HTMLTraceOutput> traces;
+    protected BoolDistBernoulli shotDistStream;
     
     public Biathlon(Model owner, String modelName, boolean showInReport, boolean showInTrace) {
         super(owner, modelName, showInReport, showInTrace);
+        traces = new LinkedList();
     }
 
     /**
@@ -38,23 +47,31 @@ public class Biathlon extends Model {
         TimeInstant stopTime = new TimeInstant(DURATION_IN_MINUTES, TimeUnit.MINUTES);
         experiment.tracePeriod(new TimeInstant(0), stopTime);
 
-        StopCondition stopCondition = new StopCondition(model, "Stop Condition", false, false);
+        StopCondition stopCondition = new StopCondition(model, "Stop Condition", true, true);
         experiment.stop(stopCondition);
 
         experiment.start();
         experiment.report();
         experiment.finish();
+        model.closeTraces();
     }
 
     @Override
     public String description() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "Not supported yet.";
     }
 
     @Override
     public void doInitialSchedules() {
+        generateBiathletes();
+    }
+
+    @Override
+    public void init() {
         this.shootingArea = new ShootingArea(this, "ShootingArea", true);
-        this.checkpoints = new Queue(this, "Checkpoints", false, false);
+        this.checkpoints = new Queue(this, "Checkpoints", true, true);
+        this.biathletes = new Queue(this, "Biathletes", true, true);
+        this.shotDistStream = new BoolDistBernoulli(this, "shotDistStream", 0.7, true, true); // probability for hit
 
         biathlon.checkpoint.BeforeShootingArea beforeShootingArea = new biathlon.checkpoint.BeforeShootingArea(this, "Checkpoint before Shooting Area", true);
         beforeShootingArea.setShootingArea(shootingArea);
@@ -62,18 +79,27 @@ public class Biathlon extends Model {
         biathlon.checkpoint.AfterShootingArea afterShootingArea = new biathlon.checkpoint.AfterShootingArea(this, "Checkpoint after Shooting Area", true);
         afterShootingArea.setShootingArea(shootingArea);
 
-        addCheckpoint(new biathlon.checkpoint.Checkpoint(this, "Checkpoint 1", true));
+        checkpoints.insert(new biathlon.checkpoint.Checkpoint(this, "Checkpoint 1", true));
         addCheckpoint(beforeShootingArea);
         addCheckpoint(afterShootingArea);
         addCheckpoint(new biathlon.checkpoint.Checkpoint(this, "Checkpoint 4", true));
-        addCheckpoint(new biathlon.checkpoint.StartFinish(this, "Start/Finish", true));
+        addCheckpoint(new biathlon.checkpoint.StartFinish(this, "Start Finish", true));
         checkpoints.last().setNextCheckpoint(checkpoints.first());
         
-        generateBiathletes();
     }
 
-    @Override
-    public void init() {
+    public void addTrace(HTMLTraceOutput trace) {
+        traces.add(trace);
+    }
+
+    public void closeTraces() {
+        for(HTMLTraceOutput trace : traces) {
+            trace.close();
+        }
+    }
+    
+    public boolean getShotResult() {
+        return shotDistStream.sample();
     }
 
     public boolean haveAllBiathletesFinished() {
@@ -86,8 +112,20 @@ public class Biathlon extends Model {
             biathleteGenerator = new BiathleteGenerator(this, "BiathleteGenerator", true);
             // tworzenie biatlonistow jest rownoznaczne z ich startem do wyscigu
             // nalezy wiec uwzglednic opoznienia na starcie
-            biathleteGenerator.schedule(new TimeInstant(i * STAGGERING_IN_SECONDS, TimeUnit.SECONDS));
+            biathleteGenerator.schedule(advanceTime(i * STAGGERING_IN_SECONDS, TimeUnit.SECONDS));
         }
+    }
+
+    public TimeInstant advanceTime(TimeSpan delay) {
+        return TimeOperations.add(presentTime(), delay);
+    }
+
+    public TimeInstant advanceTime(long delay, TimeUnit unit) {
+        return advanceTime(new TimeSpan(delay, unit));
+    }
+
+    public TimeInstant advanceTime(double delay, TimeUnit unit) {
+        return advanceTime(new TimeSpan(delay, unit));
     }
  
     public Queue<Checkpoint> getCheckpoints() {
