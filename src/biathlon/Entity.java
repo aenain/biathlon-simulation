@@ -33,11 +33,11 @@ public class Entity extends desmoj.core.simulator.Entity {
     }
 
     public void sendNote(String message, EventAbstract event) {
-        TraceNote note = new TraceNote(getModel(), formatMessage(message), getPresentTime(), this, event);
+        TraceNote note = new TraceNote(getModel(), formatMessage(message), lifeTime(), this, event);
         trace.receive(note);
     }
 
-    public TimeInstant getPresentTime() {
+    public TimeInstant lifeTime() {
         return presentTime();
     }
 }

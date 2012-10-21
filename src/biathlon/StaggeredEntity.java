@@ -19,7 +19,7 @@ public class StaggeredEntity extends Entity {
     }
 
     @Override
-    public TimeInstant getPresentTime() {
+    public TimeInstant lifeTime() {
         return TimeOperations.subtract(presentTime(), creationDelay);
     }
 }
