@@ -30,7 +30,7 @@ public class Entity extends desmoj.core.simulator.Entity {
         for (int i = 0; i < Biathlon.LAPS; i++) {
             eventsByLap.add(new LinkedList());
         }
-        trace = new biathlon.report.HTMLFileOutput(this, "Trace for: " + this);
+        trace = new biathlon.report.HTMLFileOutput(this, "Trace for " + this);
     }
 
     /**

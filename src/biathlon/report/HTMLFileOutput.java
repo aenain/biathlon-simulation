@@ -137,8 +137,9 @@ public class HTMLFileOutput extends desmoj.core.report.FileOutput {
                             "<meta charset='utf-8' />" +
                             "<title>" + title + "</title>" +
                             "<style type='text/css'>" +
-                                "table { width: 100%; }" +
-                                "table th { text-align: left; }" +
+                                "html, body { font-family: Arial }" +
+                                "table { border-collapse: collapse; }" +
+                                "table th, table td { text-align: left; padding: 0.5em 1em; border: 1px solid #eee }" +
                             "</style>" +
                         "</head>" +
                         "<body>" +
