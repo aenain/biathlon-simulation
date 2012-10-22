@@ -1,6 +1,3 @@
-/**
- * Klasy rozszerzające funkcjonalności z desmoj.core.report.
- */
 package biathlon.report;
 
 import biathlon.core.Entity;
@@ -18,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  *   w przeciwnym razie pojawia się minus. d - dziesiąta część sekundy.
  * 
  * @author Artur Hebda
- * @example
+ * {@code
  *      html = new HTMLFileOutput(biathlete, "Trace for: FINELLO Jeremy");
  *      html.startSection("Lap 1");
  *      html.startTable("Position", "Description", "Time", "Lost");
@@ -27,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  *      html.closeTable();
  *      html.closeSection();
  *      html.close();
- * 
+ * }
  * @see desmoj.core.report.FileOutput
  */
 public class HTMLFileOutput extends desmoj.core.report.FileOutput {
